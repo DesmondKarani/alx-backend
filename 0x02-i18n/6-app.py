@@ -13,6 +13,13 @@ users = {
 
 
 class Config:
+    """Configuration class for Flask app.
+
+    Attributes:
+        LANGUAGES (list): List of supported languages.
+        BABEL_DEFAULT_LOCALE (str): Default locale for the app.
+        BABEL_DEFAULT_TIMEZONE (str): Default timezone for the app.
+    """
     LANGUAGES = ["en", "fr"]
     BABEL_DEFAULT_LOCALE = "en"
     BABEL_DEFAULT_TIMEZONE = "UTC"
@@ -24,6 +31,15 @@ babel = Babel(app)
 
 
 def get_user():
+    """
+    Retrieves the user based on the 'login_as' URL parameter.
+
+    This function checks if there is a 'login_as' parameter in the URL.
+    If present, it returns the corresponding user from the 'users' dictionary.
+
+    Returns:
+    dict: The user dictionary if found, otherwise None.
+    """
     login_as = request.args.get('login_as')
     if login_as:
         return users.get(int(login_as))
@@ -32,11 +48,30 @@ def get_user():
 
 @app.before_request
 def before_request():
+    """
+    Sets the global user before each request.
+
+    This function assigns the user retrieved by `get_user`
+    to the global `g.user`
+    object before each request.
+    """
     g.user = get_user()
 
 
 def get_locale():
-    # 1. Locale from URL parameters
+    """
+    Selects the best match for supported languages.
+
+    This function is called by Flask-Babel to determine which language to use
+    for the current request. It checks in the following order:
+    1. Locale from URL parameters.
+    2. Locale from user settings.
+    3. Locale from request header.
+    4. Default locale.
+
+    Returns:
+        str: The best match for the supported languages.
+    """
     locale = request.args.get('locale')
     if locale and locale in app.config['LANGUAGES']:
         return locale
@@ -61,6 +96,15 @@ babel.init_app(app, locale_selector=get_locale)
 
 @app.route('/')
 def index():
+    """
+    The index view function.
+
+    This function handles requests to the root URL ('/') of the Flask app and
+    renders the '6-index.html' template.
+
+    Returns:
+        str: The rendered HTML template for the root URL.
+    """
     return render_template('6-index.html')
 
 
