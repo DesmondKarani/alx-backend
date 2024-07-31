@@ -1,3 +1,20 @@
+# Ignore everything
+*
+
+# But not these files...
+!.gitignore
+!README.md
+!package.json
+!package-lock.json
+!*.js
+
+# Ignore node_modules directory
+node_modules/
+
+# Ignore Redis data files
+dump.rdb
 redis-6.0.10/
 redis-6.0.10.tar.gz
-set
+
+# Ignore other unnecessary files
+.babelrc
